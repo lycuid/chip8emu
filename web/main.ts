@@ -1,3 +1,7 @@
+import Package from '../package.json';
+
+const CDN_URI = `${Package.configs.cdn}/p/${Package.name}`;
+
 const WIDTH = 64;
 const HEIGHT = 32;
 const SCALE = 10;
@@ -65,7 +69,7 @@ const render_on_canvas = (frame_buffer: Uint8Array) => {
       return;
     }
 
-    const response = await fetch(`roms/${value}`);
+    const response = await fetch(`${CDN_URI}/roms/${value}`);
     if (!response.ok) return;
 
     const rom = new Uint8Array(await response.arrayBuffer());

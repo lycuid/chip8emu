@@ -2,10 +2,12 @@ const Package = require("./package.json");
 const { resolve } = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const WasmPackPlugin = require("@wasm-tool/wasm-pack-plugin");
-const CopyWebpackPlugin = require("copy-webpack-plugin");
 
 const SRC_DIR = resolve(__dirname, "web");
 const PUBLIC_DIR = resolve(__dirname, "public");
+
+const CDN_URI = (mode) =>
+  mode == "production" ? `${Package.configs.cdn}/p/${Package.name}` : "";
 
 module.exports = (_, { mode }) => ({
   entry: resolve(SRC_DIR, "main.ts"),
@@ -25,17 +27,11 @@ module.exports = (_, { mode }) => ({
   experiments: { asyncWebAssembly: true },
   plugins: [
     new HtmlWebpackPlugin({
+      cdn_uri: CDN_URI(mode),
       filename: resolve(PUBLIC_DIR, "index.html"),
       template: resolve(SRC_DIR, "index.html"),
-      publicPath:
-        mode == "production" ? `https://cdn.lycuid.dev/p/${Package.name}` : "",
+      publicPath: CDN_URI(mode),
     }),
-    new WasmPackPlugin({ crateDirectory: __dirname, outDir: "pkg" }),
-    new CopyWebpackPlugin({
-      patterns: [
-        { from: resolve(SRC_DIR, "background.svg") },
-        { from: resolve(SRC_DIR, "roms", "*") },
-      ],
-    }),
+    new WasmPackPlugin({ crateDirectory: __dirname }),
   ],
 });
