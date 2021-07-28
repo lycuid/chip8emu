@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="shortcut icon" href="#" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rust Wasm example</title>
+  <link href="https://fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet">
+  <link href="https://unpkg.com/nes.css/css/nes.css" rel="stylesheet" />
+  <style>
+    html, body {
+      height: 100vh;
+      margin: 0;
+      padding: 0;
+      background: url(/background.svg) no-repeat fixed center;
+      background-size: auto;
+    }
+    .centered {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+    header {
+      margin-left: auto;
+      margin-right: auto;
+      height: 100%;
+    }
+  </style>
+</head>
+<body>
+  <header class="centered">
+    <canvas class="nes-container is-rounded is-dark" id="canvas"></canvas>
+    <div class="nes-container is-rounded is-dark centered with-title">
+      <p class="title">Select Rom file:</p>
+      <div class="nes-select is-dark">
+        <select required name="romselect" id="romselect"><option /></select>
+      </div>
+    </div>
+  </header>
+</body>
+</html>

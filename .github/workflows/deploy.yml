@@ -1,0 +1,41 @@
+name: deploy
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - "src/**"
+      - "web/**"
+      - "webpack.config.js"
+      - ".github/workflows/deploy.yml"
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone and checkout.
+        uses: actions/checkout@v2
+
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+
+      - name: Installing wasm-pack.
+        run: cargo install wasm-pack
+
+      - name: Installing Yarn.
+        run: curl -o- -L https://yarnpkg.com/install.sh | bash
+
+      - name: Install dependencies and build website.
+        run: yarn install && yarn build
+
+      - name: Deploy to AWS.
+        uses: lycuid/aws_deploy@master
+        with:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+          TARGET: ${{ format('{0}/{1}', github.workspace, 'public') }}
+          S3_BUCKET_PATH: ${{ format('s3://{0}/p/{1}', secrets.S3_ASSETS_BUCKET, github.event.repository.name) }}
+          EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
+          EC2_REMOTE_ADDR: ${{ secrets.EC2_REMOTE_ADDR }}
+          EC2_REMOTE_PATH: ${{ format('{0}/{1}', secrets.EC2_REMOTE_PATH, github.event.repository.name) }}
